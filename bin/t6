@@ -1,4 +1,4 @@
-#!/bin/sh -
+#!/bin/bash -
 
 if test -z "${TMUX}"; then # am I already in tmux?
   NEW_SESSION=true
