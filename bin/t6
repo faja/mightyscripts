@@ -1,0 +1,28 @@
+#!/bin/sh -
+
+if test -z "${TMUX}"; then # am I already in tmux?
+  NEW_SESSION=true
+  SESSION=$(pwgen 16 1)
+  WINDOW=1
+  tmux new-session -d -s "${SESSION}"
+else
+  SESSION=$(tmux display-message -p '#{session_name}')
+  WINDOW=$(tmux display-message -p '#{active_window_index}')
+fi
+
+tmux split-window -t "${SESSION}:${WINDOW}.1" -h
+tmux split-window -t "${SESSION}:${WINDOW}.1" -v -l 33%
+tmux split-window -t "${SESSION}:${WINDOW}.1" -v -l 50%
+tmux split-window -t "${SESSION}:${WINDOW}.4" -v -l 33%
+tmux split-window -t "${SESSION}:${WINDOW}.4" -v -l 50%
+
+tmux select-pane -t 1
+
+test "${NEW_SESSION}" && tmux -2 attach-session -t "${SESSION}"
+
+tmux send-keys -t "${SESSION}:${WINDOW}.1" C-l
+tmux send-keys -t "${SESSION}:${WINDOW}.2" C-l
+tmux send-keys -t "${SESSION}:${WINDOW}.3" C-l
+tmux send-keys -t "${SESSION}:${WINDOW}.4" C-l
+tmux send-keys -t "${SESSION}:${WINDOW}.5" C-l
+tmux send-keys -t "${SESSION}:${WINDOW}.6" C-l
