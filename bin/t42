@@ -1,0 +1,26 @@
+#!/bin/bash -
+
+#
+# please copy pase and adjust to current working projects
+#
+
+# session 0: HOME {{{ ---------------------------------------------------------#
+SESSION_NAME=HOME
+SESSION_CWD=/home/mc
+tmux new-session -d -s "${SESSION_NAME}" -c "${SESSION_CWD}"
+# }}} -------------------------------------------------------------------------#
+# session 1: ~/bin {{{ ---------------------------------------------------------#
+SESSION_NAME=~/bin
+SESSION_CWD=/home/mc/bin
+WINDOW_NAME=master
+tmux new-session -d -s "${SESSION_NAME}" -c "${SESSION_CWD}" -n "${WINDOW_NAME}"
+# }}} -------------------------------------------------------------------------#
+# session 2: project1 {{{ ---------------------------------------------------------#
+SESSION_NAME=project1
+SESSION_CWD=/home/mc/GitRepos/PERSONAL/mightyscripts
+WINDOW_NAME=master
+tmux new-session -d -s "${SESSION_NAME}" -c "${SESSION_CWD}" -n "${WINDOW_NAME}"
+# }}} -------------------------------------------------------------------------#
+
+SESSION_NAME=HOME
+tmux attach-session -d -t "${SESSION_NAME}"
