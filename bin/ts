@@ -1,0 +1,7 @@
+#!/bin/bash -
+
+#
+# ts - tmxu session switcher
+#
+
+tmux list-sessions -F'#S' | sort | fzf | xargs -r tmux switch -t
