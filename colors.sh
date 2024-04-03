@@ -51,3 +51,21 @@ echo "${BOLD}BOLD${NORMAL}"
 echo "${BLINK}BLINK${NORMAL}"
 echo "${REVERSE}REVERSE${NORMAL}"
 echo "${UNDERLINE}UNDERLINE${NORMAL}"
+
+# oldschool escape
+# tldr "\e[<foreground>;<background>;<format>m
+# 1-red, 2-green, 3-yellow, 4-blue, 5-magenda, 6-cyan, 7-white
+# 3X-foreground, 4X-background
+
+RED="\e[31m"
+RED_AND_BOLD="\e[31;1m"
+RED_ON_YELLOW="\e[31;43m"
+RED_ON_YELLOW_AND_BOLD="\e[31;43;1m"
+NORMAL="\e[0m"
+
+echo
+echo
+echo -e "${RED}RED${NORMAL}"
+echo -e "${RED_AND_BOLD}RED and BOLD${NORMAL}"
+echo -e "${RED_ON_YELLOW}RED on YELLOW${NORMAL}"
+echo -e "${RED_ON_YELLOW_AND_BOLD}RED on YELLOW and BOLD${NORMAL}"
