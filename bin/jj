@@ -1,0 +1,138 @@
+#!/bin/bash -
+
+PROG_VERSION=1.0.0
+PROG_NAME=$(basename "${0}")
+
+#------------------------------------------------------------------------------#
+# {{{ print_help()
+print_help() {
+  echo "usage:   ${PROG_NAME} ARG1 [OPTIONS]"
+  echo "example: ${PROG_NAME} xyzzy --add"
+  echo
+  echo OPTIONS:
+  echo "  --help|-h    print this message"
+  echo "  --add        add current dir to .j file (default: false)"
+  echo "  --edit       edit .j file               (default: false)"
+  echo "  --rm         rm entries from .j file    (default: false)"
+  echo
+  echo "VERSION: ${PROG_VERSION}"
+  exit 0
+}
+# }}}
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+# {{{ defaults
+ADD=
+RM=
+EDIT=
+J_FILE=~/.config/j
+# }}}
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+# {{{ option parsing
+while test "${#}" -gt 0; do
+  case "${1}" in
+    # {{{ help
+    --help)
+      print_help
+      ;;
+    -h)
+      print_help
+      ;;
+    # }}}
+    # {{{ options
+    --add)
+      ADD=true
+      ;;
+    --edit)
+      EDIT=true
+      ;;
+    --rm)
+      RM=true
+      ;;
+    # }}}
+    # {{{ catch all
+    -*)
+      # catch unknown options but continue
+      echo "${PROG_NAME}: $1: unknown option" >&2
+      ;;
+    *)
+      : "${ARG1:=${1}}"
+      ;;
+      # }}}
+  esac
+  shift
+done
+# }}}
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+# {{{ check .j file
+if ! test -f ${J_FILE}; then
+  echo ${J_FILE} does not exist
+  exit 1
+fi
+# }}}
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+# {{{ main logic
+# {{{ edit
+if test ${EDIT}; then
+  ${EDITOR} ${J_FILE}
+  exit 0
+fi
+# }}}
+# {{{ rm
+if test ${RM}; then
+  if test -z "${ARG1}"; then
+    echo must pass argument for \'--rm\' option
+    exit 1
+  fi
+
+  grep -v "${ARG1}" "${J_FILE}" > /tmp/.j
+  mv /tmp/.j ${J_FILE}
+  exit 0
+fi
+# }}}
+# {{{ add
+if test "${ADD}"; then
+  DIR=$(pwd)
+  NAME="${DIR##/*/}"
+  if test "${ARG1}"; then
+    NAME="${ARG1}"
+  fi
+  echo "${NAME}" "${DIR}" >> "${J_FILE}"
+  exit 0
+fi
+# }}}
+
+ENTRIES=$(awk '{print $1}' ${J_FILE} | grep "${ARG1}")
+if test -z "${ENTRIES}"; then
+  ENTRIES=$(awk '{print $1}' ${J_FILE})
+fi
+if test "$(echo "${ENTRIES}" | wc -l)" -eq 1; then
+  ENTRY="${ENTRIES}"
+else
+  ENTRY=$(echo "${ENTRIES}" | fzf)
+fi
+
+DIR=$(awk -vpattern="${ENTRY}" '$1 == pattern {print $2}' ${J_FILE} | head -1)
+echo "${DIR}"
+# }}}
+#------------------------------------------------------------------------------#
+
+# NOTE:
+#   to make cd to the outputed DIR use the below function
+#   ```sh
+#     if echo $@ | grep -q -e "--add" -e "--edit" -e "--rm" -e "--help" -e "-h"; then
+#      jj $@
+#     else
+#       DIR=$(jj $@)
+#       if test ${DIR}; then
+#         cd ${DIR}
+#       fi
+#     fi
+#   ```
