@@ -1,6 +1,6 @@
 #!/bin/bash -
 
-PROG_VERSION=1.0.0
+PROG_VERSION=1.1.0
 PROG_NAME=$(basename "${0}")
 
 #------------------------------------------------------------------------------#
@@ -26,6 +26,7 @@ print_help() {
 ADD=
 RM=
 EDIT=
+TMUX_S=
 J_FILE=~/.config/j
 # }}}
 #------------------------------------------------------------------------------#
@@ -51,6 +52,9 @@ while test "${#}" -gt 0; do
       ;;
     --rm)
       RM=true
+      ;;
+    --tmux)
+      TMUX_S=true
       ;;
     # }}}
     # {{{ catch all
@@ -120,6 +124,11 @@ else
 fi
 
 DIR=$(awk -vpattern="${ENTRY}" '$1 == pattern {print $2}' ${J_FILE} | head -1)
+if test "${TMUX_S}"; then
+  tmux new-session -d -s "${ENTRY}" -c "${DIR}"
+  tmux switch-client -t "${ENTRY}"
+  exit 0
+fi
 echo "${DIR}"
 # }}}
 #------------------------------------------------------------------------------#
@@ -127,7 +136,7 @@ echo "${DIR}"
 # NOTE:
 #   to make cd to the outputed DIR use the below function
 #   ```sh
-#     if echo $@ | grep -q -e "--add" -e "--edit" -e "--rm" -e "--help" -e "-h"; then
+#     if echo $@ | grep -q -w -e "-h" -e "--help" -e "--add" -e "--edit" -e "--rm" -e "--tmux"; then
 #      jj $@
 #     else
 #       DIR=$(jj $@)
