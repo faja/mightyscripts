@@ -1,6 +1,6 @@
 #!/bin/bash -
 
-PROG_VERSION=1.1.0
+PROG_VERSION=1.2.0
 PROG_NAME=$(basename "${0}")
 
 #------------------------------------------------------------------------------#
@@ -11,9 +11,10 @@ print_help() {
   echo
   echo OPTIONS:
   echo "  --help|-h    print this message"
-  echo "  --add        add current dir to .j file (default: false)"
-  echo "  --edit       edit .j file               (default: false)"
-  echo "  --rm         rm entries from .j file    (default: false)"
+  echo "  --add|-a     add current dir to .j file               (default: false)"
+  echo "  --edit|-e    edit .j file                             (default: false)"
+  echo "  --rm|-r      rm entries from .j file                  (default: false)"
+  echo "  --tmux|-t    launch tmux session instead of just 'cd' (default: false)"
   echo
   echo "VERSION: ${PROG_VERSION}"
   exit 0
@@ -47,13 +48,25 @@ while test "${#}" -gt 0; do
     --add)
       ADD=true
       ;;
+    -a)
+      ADD=true
+      ;;
     --edit)
+      EDIT=true
+      ;;
+    -e)
       EDIT=true
       ;;
     --rm)
       RM=true
       ;;
+    -r)
+      RM=true
+      ;;
     --tmux)
+      TMUX_S=true
+      ;;
+    -t)
       TMUX_S=true
       ;;
     # }}}
@@ -136,7 +149,7 @@ echo "${DIR}"
 # NOTE:
 #   to make cd to the outputed DIR use the below function
 #   ```sh
-#     if echo $@ | grep -q -w -e "-h" -e "--help" -e "--add" -e "--edit" -e "--rm" -e "--tmux"; then
+#     if echo -- $@ | grep -q -w -e "--help" -e "-h" -e "--add" -e "-a" -e "--edit" -e "-e" -e "--rm" -e "-r" -e "--tmux" -e "-t"; then
 #      jj $@
 #     else
 #       DIR=$(jj $@)
