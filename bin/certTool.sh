@@ -1,6 +1,6 @@
 #!/bin/bash -
 
-PROG_VERSION=0.1.0
+PROG_VERSION=0.1.1
 PROG_NAME=$(basename "${0}")
 
 # {{{ print_help()
@@ -9,8 +9,8 @@ print_help() {
   echo "example: ${PROG_NAME} get_cert_info --file - --cert-no 2"
   echo
   echo SUBCOMMANDS:
-  echo "  get_cert        print cert (default subcommand)"
-  echo "  get_cert_info   print cert details"
+  echo "  get_cert        print cert"
+  echo "  get_cert_info   print cert details (default)"
   echo
   echo OPTIONS:
   echo "  --help|-h      print this message"
@@ -23,7 +23,7 @@ print_help() {
 # }}}
 
 # {{{ defaults
-SUBCOMMAND=get_cert
+SUBCOMMAND=get_cert_info
 CERT_FILE=-
 CERT_NUMBER=1
 # }}}
